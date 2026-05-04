@@ -1,0 +1,9 @@
+# Archivos de configuración de dbt
+profiles.yml
+target/
+dbt_packages/
+logs/
+
+# Otros archivos locales
+dbt_internal_packages/
+.env

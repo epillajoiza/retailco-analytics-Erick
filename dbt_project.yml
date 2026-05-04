@@ -1,0 +1,36 @@
+# Nombre de tu proyecto (debe coincidir con la carpeta principal de tus modelos)
+name: 'retailco_analytics'
+version: '1.0.0'
+config-version: 2
+
+# EL NEXO DE UNIÓN: Esto le dice a dbt que busque "dbt_snowflake" en tu ~/.dbt/profiles.yml
+profile: 'dbt_snowflake'
+
+# Configuración de las rutas estándar de dbt
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# Carpetas que dbt limpiará cuando ejecutes 'dbt clean'
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Configuración por defecto de tus modelos según su capa (carpeta)
+models:
+  retailco_analytics: # IMPORTANTE: Esto debe ser igual al 'name' de arriba
+    
+    staging:
+      +materialized: view
+      +schema: staging      
+    
+    intermediate:
+      +materialized: ephemeral
+      +schema: intermediate  
+    
+    marts:
+      +materialized: table
+      +schema: marts
