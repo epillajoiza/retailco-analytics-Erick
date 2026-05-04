@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: int_unified_sales
+    description: >
+      Tabla unida de Store, catalog y Web
+      Se resuelven asi las inconsistencias mapenando store call center y
+      web sites a una columna comun location_sk.
+      
+
+  - name: int_unified_returns
+    description: >
+      Union de devoluciones, cogemos el id de pedido para permitir el join con 
+      la venta original mediante la clave compuesta order_id e item_sk
+
+  - name: int_customer_enriched
+    description: >
+      Se resuelve la junk dimensaion de demografías desnormalizando 
+      los atributos CUSTOMER_DEMOGRAPHICS y HOUSEHOLD_DEMOGRAPHICS directamente en el perfil del cliente. 
+      Esto optimiza el rendimiento para la capa de visualización.

@@ -1,0 +1,87 @@
+version: 2
+
+models:
+
+  #Dim principales
+  - name: stg_customer
+    description: "Limpieza de clientes. Decisión: Se aplicó COALESCE('Desconocido') en nombres/apellidos para evitar nulos en reportes."
+    columns:
+      - name: customer_sk
+        tests: [unique, not_null]
+      - name: customer_age
+        description: "Columna derivada. Edad calculada al año actual."
+
+  - name: stg_item
+    description: "Dimensión de productos. Decisión: Implementación de lógica SCD2 con flag is_current (Valid_to IS NULL)."
+    columns:
+      - name: item_sk
+        tests: [unique, not_null]
+
+  - name: stg_store
+    description: "Dimensión de tiendas físicas. Decisión: Corrección ortográfica de 'tax_precentage' a 'tax_percentage'."
+    columns:
+      - name: store_sk
+        tests: [unique, not_null]
+
+  - name: stg_date_dim
+    description: "Dimensión temporal. Decisión: Estandarización de nombres semánticos (d_moy -> month_of_year)."
+    columns:
+      - name: date_sk
+        tests: [unique, not_null]
+
+  # 3 dim extra
+  - name: stg_customer_address
+    description: "Direcciones de clientes. Decisión: Casteo de códigos postales a String para evitar pérdida de ceros a la izquierda."
+    columns:
+      - name: address_sk
+        tests: [unique, not_null]
+
+  - name: stg_customer_demographics
+    description: "Perfil demográfico. Decisión: Renombrado de acrónimos técnicos (dep -> dependent) para claridad en Power BI."
+    columns:
+      - name: demo_sk
+        tests: [unique, not_null]
+
+  - name: stg_household_demographics
+    description: "Demografía del hogar. Decisión: Unificación de métricas de vehículos y dependientes."
+    columns:
+      - name: household_demo_sk
+        tests: [unique, not_null]
+
+  # FACTS
+  - name: stg_store_sales
+    description: "Ventas en tienda. Decisión: Ticket_number casteado a String para compatibilidad en UNION ALL."
+    columns:
+      - name: ticket_number
+        tests: [not_null]
+
+  - name: stg_catalog_sales
+    description: "Ventas por catálogo. Decisión: Uso de bill_customer_sk como referencia principal de cliente."
+    columns:
+      - name: order_number
+        tests: [not_null]
+
+  - name: stg_web_sales
+    description: "Ventas web. Decisión: Estandarización de métricas monetarias a formato DECIMAL(7,2)."
+    columns:
+      - name: order_number
+        tests: [not_null]
+
+  # Devs
+  - name: stg_store_returns
+    description: "Devoluciones en tienda. Decisión: Mapeo de ticket_number + item_sk como clave compuesta de negocio."
+    columns:
+      - name: ticket_number
+        tests: [not_null]
+
+  - name: stg_catalog_returns
+    description: "Devoluciones catálogo. Decisión: Renombrado de cr_return_amount a return_amt para consistencia global."
+    columns:
+      - name: order_number
+        tests: [not_null]
+
+  - name: stg_web_returns
+    description: "Devoluciones web. Decisión: Consistencia en tipos de datos para cruce con ventas originales."
+    columns:
+      - name: order_number
+        tests: [not_null]
