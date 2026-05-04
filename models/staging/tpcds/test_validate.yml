@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: test_flujo
+    description: "Modelo para validar conexion"
+    columns:
+      - name: date_key
+        tests:
+          - unique
+          - not_null
