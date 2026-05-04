@@ -1,0 +1,110 @@
+version: 2
+
+models:
+  - name: mart_sales_by_channel
+    description: "Métricas de ventas agregadas por canal, locación, categoría y mes."
+    columns:
+      - name: sale_month_sk
+        description: "Clave primaria."
+        tests:
+          - unique
+          - not_null
+      - name: sales_channel
+        description: "Canal de venta."
+      - name: location_key
+        description: "Locación de venta."
+      - name: category_name
+        description: "Categoría de producto."
+      - name: year
+        description: "Año de venta."
+      - name: month
+        description: "Mes de venta."
+      - name: max_date_key
+        description: "Última fecha de venta en el mes."
+      - name: total_units_sold
+        description: "Unidades totales vendidas."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+      - name: total_units_returned
+        description: "Unidades totales devueltas."
+      - name: total_gross_revenue
+        description: "Ingreso bruto total."
+      - name: total_return_amount
+        description: "Monto total devuelto."
+      - name: net_revenue
+        description: "Ingreso neto después de devoluciones."
+      - name: return_rate_pct
+        description: "Tasa de devolución en porcentaje."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: avg_discount_pct
+        description: "Descuento promedio en porcentaje."
+
+  #- name: mart_customer_lifetime_value
+  #  description: "Métricas de valor de vida del cliente y segmentación."
+  # tests:
+  #   - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+  #        arguments:
+  #          column_A: last_purchase
+  #          column_B: first_purchase
+  #  columns:
+  #    - name: customer_key
+  #      description: "Clave del cliente."
+  #      tests:
+  #        - unique
+  #        - not_null
+  #    - name: first_name
+  #      description: "Nombre del cliente."
+  #    - name: last_name
+  #      description: "Apellido del cliente."
+  #    - name: total_transactions
+  #      description: "Total de transacciones realizadas."
+  #    - name: channels_used
+  #      description: "Cantidad de canales usados."
+  #    - name: first_purchase
+  #      description: "Primera fecha de compra."
+  #    - name: last_purchase
+  #      description: "Última fecha de compra."
+  #    - name: clv_net_revenue
+  #      description: "Ingreso neto de por vida."
+  #    - name: return_rate_pct
+  #      description: "Tasa de devoluciones."
+  #    - name: value_segment
+  #      description: "Segmento de valor (Alto, Medio, Bajo)."
+  #      tests:
+  #        - accepted_values:
+  #            arguments:
+  #              values: ['Alto', 'Medio', 'Bajo']
+
+  - name: mart_inventory_health
+    description: "Salud del inventario y roturas de stock a nivel semanal."
+    columns:
+      - name: item_key
+        description: "Clave del artículo."
+        tests:
+          - not_null
+      - name: week_id
+        description: "Semana del año."
+        tests:
+          - not_null
+      - name: avg_weekly_stock
+        description: "Stock semanal promedio."
+      - name: weeks_of_stock
+        description: "Semanas de stock disponible."
+      - name: is_stockout_week
+        description: "Indicador si hubo rotura de stock."
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: stock_trend
+        description: "Tendencia del stock."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['creciente', 'decreciente', 'estable']
